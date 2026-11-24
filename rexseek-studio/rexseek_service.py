@@ -6,7 +6,7 @@
 
 启动（需要 GPU 与 rexseek conda 环境）：
     HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-      /home/mingle/miniconda3/envs/rexseek/bin/python rexseek_service.py --port 9000
+      python3 rexseek_service.py --port 9000
 
 然后在另一个终端启动 UI：
     python3 server.py --engine proxy --endpoint http://127.0.0.1:9000
@@ -1019,3 +1019,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

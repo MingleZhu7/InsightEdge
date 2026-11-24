@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
-REXSEEK_PY="${REXSEEK_PY:-/home/mingle/miniconda3/envs/rexseek/bin/python}"
+REXSEEK_PY="${REXSEEK_PY:-python3}"
 REXSEEK_PORT="${REXSEEK_PORT:-9000}"
 UI_PORT="${UI_PORT:-8848}"
 
@@ -27,3 +27,4 @@ PY
 done
 
 python3 server.py --engine proxy --endpoint "http://127.0.0.1:$REXSEEK_PORT" --port "$UI_PORT" "$@"
+
