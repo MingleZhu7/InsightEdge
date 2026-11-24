@@ -31,3 +31,10 @@ bench/imgs/
 venv/
 node_modules/
 .DS_Store
+
+# 演示素材（第三方图片/现场视频，不入库，见 rexseek-studio/web/assets/README.md）
+rexseek-studio/web/assets/
+rexseek-studio/data/evidence/
+
+!rexseek-studio/web/assets/README.md
+
