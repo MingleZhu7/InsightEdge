@@ -53,6 +53,7 @@ insight-edge/
 ```
 
 > 权重（RexSeek-3B 7.3 GB、Qwen2.5-3B 6.3 GB、YOLOE .cix/.onnx）不入库，见 [`models/README.md`](models/README.md)。
+> **演示素材（番茄等 6 张图 + 3 段值守视频，约 6 MB）已随仓库**，clone 后无需准备素材即可跑通两个前端。
 
 ---
 
@@ -177,6 +178,7 @@ python3 /home/cix/agent_latency.py
 | 组件 | 用途 | 许可 |
 |---|---|---|
 | [IDEA-Research/RexSeek](https://github.com/IDEA-Research/RexSeek) | 指代模型与 HumanRef benchmark | 见上游 LICENSE（研究用途，需自行 clone，不随本仓库分发） |
+| 演示图片 / 现场视频（`web/assets`、`web/media`） | 前端演示素材 | 项目自制或已获授权；如需公开发布，请自行确认肖像与版权 |
 | [ultralytics](https://github.com/ultralytics/ultralytics) | YOLOE 导出（**仅离线导出用**） | **AGPL-3.0**：`models/` 下的导出脚本依赖它；板端运行时只用导出的 `.cix/.onnx`，不 import ultralytics |
 | Qwen2.5-3B / 1.5B | LLM | Apache-2.0 |
 | OpenAI CLIP / open_clip | 视觉塔 | MIT |
@@ -196,3 +198,4 @@ python3 /home/cix/agent_latency.py
   year={2025}
 }
 ```
+
