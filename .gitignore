@@ -1,4 +1,4 @@
-# 忽略权重、数据与运行产物
+# 忽略权重与运行产物（演示素材随仓库：web/assets、web/media 已入库）
 *.pt
 *.pth
 *.onnx
@@ -19,7 +19,6 @@ __pycache__/
 data/*.db
 data/*.db-*
 data/evidence/
-web/media/
 web/data/
 
 # 评测原始数据（HumanRef 属第三方数据集，不入库）
@@ -31,12 +30,3 @@ bench/imgs/
 venv/
 node_modules/
 .DS_Store
-
-# 演示素材（第三方图片/现场视频，不入库，见 rexseek-studio/web/assets/README.md）
-rexseek-studio/web/assets/*
-!rexseek-studio/web/assets/README.md
-rexseek-studio/data/evidence/
-
-!rexseek-studio/web/assets/README.md
-
-
