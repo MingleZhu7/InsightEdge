@@ -11,7 +11,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 echo "→ 同步代码到 ${USER_}@${BOARD}:${ROOT}"
 ssh "${USER_}@${BOARD}" "mkdir -p ${ROOT}"
 rsync -az --delete \
-  --exclude 'data/*.db*' --exclude 'web/media/' --exclude 'web/data/' \
+  --exclude 'data/*.db*' --exclude 'web/media/' --exclude 'web/data/' --exclude 'web/assets/' \
   --exclude '__pycache__/' --exclude '*.log' \
   "${HERE}/rexseek-studio/" "${USER_}@${BOARD}:${ROOT}/"
 
