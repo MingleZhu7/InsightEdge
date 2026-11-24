@@ -311,7 +311,7 @@ POST /api/chat (messages + media.data_url)
 - 定位模型：`/cix/models_orig/IDEA-Research__RexSeek-3B`（官方权重，ConvNeXt-Large 辅助塔）
 - 对话模型：`/cix/rexseek-studio/models/Qwen2.5-1.5B-Instruct`（本地已有，无下载）
 - 候选框模型：`models/grounding-dino-tiny`
-- 环境：`/home/mingle/miniconda3/envs/rexseek`（torch 2.5.1 + cu124）
+- 环境：`板卡容器内 `python3`（torch 2.7.1 + IxRT）
 - 默认阈值：GDINO box 0.2；不同样例可在 `samples.json` 里用 `box_threshold` 覆盖（如高速视频 0.4）
 - 显存：约 12.5 GB；24 GB 的 3090 可以留出足够余量
 
@@ -451,4 +451,5 @@ curl http://127.0.0.1:8848/api/health        # UI 服务（应显示 "name": "pr
 - 检测框颜色与结果编号严格对应；目标超过 3 个时标签收成编号，悬停展开。
 - 真实模式的回答短、位置明确；不伪造模型没有输出的判断依据。
 - 动画可被系统「减少动态效果」设置关闭。
+
 
