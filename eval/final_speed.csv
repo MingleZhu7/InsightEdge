@@ -1,0 +1,30 @@
+config,stage,mean_ms,median_ms,p90_ms,note
+"towers (batch 1, bf16)",clip_l_336_eager,33.79,33.50,33.80,"RexSeek vision_tower, 30 iters"
+"towers (batch 1, bf16)",clip_l_336_cuda_graph,28.07,28.08,28.21,"eager module captured in a CUDA graph (1.20x)"
+"towers (batch 1, bf16)",convnext_l_768_eager,62.26,62.30,62.39,
+"towers (batch 1, bf16)",convnext_l_768_cuda_graph,61.34,61.29,61.57,"1.02x, already compute-bound"
+"towers (batch 1, bf16)",towers_eager_sum,96.04,,,
+"towers (batch 1, bf16)",towers_graph_sum,89.41,,,"used in the deployment path"
+"qwen2.5-3b vLLM 0.23",prefill_629_to_1,42.65,42.74,43.05,"compilation mode=none, cudagraph_mode=full"
+"qwen2.5-3b vLLM 0.23",prefill_629_to_3,78.49,78.03,80.83,"deployment value"
+"qwen2.5-3b vLLM 0.23",decode_per_token,17.92,,,"derived from the two above"
+"qwen2.5-3b HF generate",prefill_629_to_3,1651.8,1455.3,2171.4,"same prompt, HF path (21x slower than vLLM)"
+"deploy: YOLOE-NPU + L towers",prep,39.4,38.7,44.4,"letterbox + 768 dual-path + box encode + tokenize"
+"deploy: YOLOE-NPU + L towers",detector_npu_int8,51.7,51.7,51.7,"includes transfer; hidden behind towers"
+"deploy: YOLOE-NPU + L towers",nms,0.4,,,
+"deploy: YOLOE-NPU + L towers",towers_graph,89.41,,,
+"deploy: YOLOE-NPU + L towers",qwen_vllm,78.49,,,
+"deploy: YOLOE-NPU + L towers",serial_total,259.4,,,"sum of all stages"
+"deploy: YOLOE-NPU + L towers",critical_path,207.3,,,"39.4 + max(51.7, 89.4) + 78.5; NPU overlaps GPU towers"
+"deploy: YOLOE-NPU + L towers",fps,4.8,,,"1000/207.3"
+"ref: GD graft448 + L towers",prep,42.6,42.3,47.3,
+"ref: GD graft448 + L towers",detector_gd_ixrt,92.6,92.6,92.9,
+"ref: GD graft448 + L towers",nms,0.3,,,
+"ref: GD graft448 + L towers",towers_graph,89.41,,,
+"ref: GD graft448 + L towers",qwen_vllm,78.49,,,
+"ref: GD graft448 + L towers",critical_path,303.4,,,"GPU detector cannot overlap GPU towers"
+"ref: GD graft448 + L towers",fps,3.3,,,
+"ref: YOLOE native PyTorch",detector_ultralytics_predict,138.4,,,"Python + CPU NMS overhead"
+"ref: stock HF GD-tiny",detector_800x1333_fp32,439.9,,,
+"notes",torch_compile,,,,"NOT available on this board (torch._inductor needs Triton); old 12.8/41.9 figures do not apply"
+"notes",potential_with_triton,,,,"towers ~56 ms -> critical path ~174 ms"

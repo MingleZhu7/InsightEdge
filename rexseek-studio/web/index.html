@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insight · 端侧视觉智能体</title>
+<style>
+:root{--bg:#071018;--panel:#0b1a25;--line:#1b3546;--ink:#d8f3ff;--muted:#6f93a5;--cyan:#35e0ff;--red:#ff5c5c;--green:#2ee6a8;--amber:#ffd84d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{font-size:17px;margin:0;letter-spacing:.06em}.sub{color:var(--muted);font-size:12px;margin-left:10px}.badge{font-size:11px;padding:4px 8px;border:1px solid #2b6f72;border-radius:5px;color:#7ef0dc;background:#0e2a2e}
+main{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;padding:16px 22px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px;min-width:0}.panel h2{font-size:11px;letter-spacing:.14em;color:var(--muted);margin:0 0 9px;text-transform:uppercase}
+#sceneWrap{position:relative;background:#050b10;border:1px solid #122b3a;border-radius:8px;min-height:300px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+canvas{max-width:100%;max-height:560px;display:block}
+.samples{display:flex;gap:6px;margin-top:9px;overflow:auto}.sample{width:70px;height:44px;border:1px solid #1b3546;border-radius:5px;object-fit:cover;cursor:pointer;opacity:.75}.sample.active{border-color:var(--cyan);opacity:1}
+.tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}button{background:#123445;color:#7ef0dc;border:1px solid #2b6f72;border-radius:7px;padding:8px 12px;cursor:pointer;font:inherit}button.primary{background:#1a4a40;color:#9dffd9;border-color:#2c8a6b}button.red{background:#3d1c1c;color:#ff9b8f;border-color:#8a3a32}
+input[type=file]{color:var(--muted);font-size:12px}
+label.btn{display:inline-flex;align-items:center;gap:6px;background:#123445;color:#7ef0dc;border:1px solid #2b6f72;border-radius:7px;padding:8px 12px;cursor:pointer;font:inherit}
+label.btn:hover{background:#17475c}
+.badge.bad{color:#ffb3ad;border-color:#8a3a32;background:#2a0f11}.status{padding:10px;border-radius:8px;border:1px solid #1f7a55;background:#0a1f19;margin-bottom:8px}.status.hot{border-color:#8a3a32;background:#260d10;color:#ffb3ad}.status b{font-size:16px;display:block}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.metric{background:#08131e;border:1px solid #163044;border-radius:6px;padding:7px}.metric b{font-size:16px;display:block}.metric span{font-size:9px;color:var(--muted)}
+textarea{width:100%;height:54px;background:#08131e;color:var(--ink);border:1px solid #24465a;border-radius:7px;padding:8px;font:inherit}.mode{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}.mode button.active{background:#1a4a40;color:#9dffd9;border-color:#2c8a6b}
+.trace{font-size:11px;color:#b7dbe8;max-height:180px;overflow:auto;background:#08131e;border:1px solid #163044;border-radius:6px;padding:7px;margin-top:7px}.trace div{padding:2px 0}.finding{display:flex;gap:8px;align-items:center;padding:7px;border:1px solid #163044;border-radius:6px;background:#08131e;margin:4px 0;font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--red)}.dot.ok{background:var(--green)}.evt{font-size:11px;padding:6px 0;border-bottom:1px solid #122b3a}.evt a{color:var(--cyan)}
+#answer{font-size:15px;margin-top:8px;line-height:1.45}#evidence img{max-width:100%;border:1px solid #163044;border-radius:6px;margin-top:6px}
+.bottom{margin:0 22px 22px}
+.ledger-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.askrow{display:flex;gap:6px;align-items:center}
+.askrow input{width:380px;max-width:50vw;background:#08131e;color:var(--ink);border:1px solid #24465a;border-radius:7px;padding:8px 10px;font:inherit}
+#ledgerAnswer{margin:0 0 10px;padding:9px 11px;border:1px solid #1f7a55;background:#0a1f19;border-radius:8px;font-size:13px;color:#9dffd9}
+table.evt{width:100%;border-collapse:collapse;font-size:12px}
+table.evt th{text-align:left;color:var(--muted);font-weight:500;font-size:10px;letter-spacing:.1em;padding:6px 8px;border-bottom:1px solid #1b3546;text-transform:uppercase}
+table.evt td{padding:5px 8px;border-bottom:1px solid #122b3a;color:#cfe8f5;line-height:1.35}
+table.evt th{padding:5px 8px}
+table.evt tr.row{cursor:pointer}
+table.evt tr.row:hover{background:#0e2130}
+table.evt a{color:var(--cyan);text-decoration:none}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid #2c8a6b;color:#9dffd9;background:#0c231c}
+.tag.hot{border-color:#8a3a32;color:#ffb3ad;background:#2a0f11}
+.foot{margin:0 22px 26px;padding-top:10px;border-top:1px solid #122b3a;color:#4d6f80;font-size:11px;letter-spacing:.04em}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+</style>
+<style id="unifiedNav">
+.nav{display:flex;align-items:center;gap:18px;padding:11px 22px;border-bottom:1px solid #1b3546;background:linear-gradient(180deg,#081620,#071018)}
+.nav .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#5eead4,#7cc4ff);display:grid;place-items:center;font-weight:800;color:#04121a;font-size:15px}
+.nav .brand{display:flex;align-items:center;gap:10px}
+.nav .bname{font-size:16px;font-weight:600;letter-spacing:.08em;color:#d8f3ff}
+.nav .bsub{font-size:11px;color:#6f93a5;letter-spacing:.04em}
+.nav .tabs{display:flex;gap:4px;margin-left:12px}
+.nav .tabs a{padding:6px 14px;border-radius:7px;font-size:13px;text-decoration:none;color:#7fa9bd;border:1px solid transparent}
+.nav .tabs a:hover{color:#d8f3ff;border-color:#1b3546}
+.nav .tabs a.on{background:#0e2a2e;color:#7ef0dc;border-color:#2b6f72}
+.nav .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav .badge{font-size:11px;padding:4px 9px;border:1px solid #2b6f72;border-radius:5px;color:#7ef0dc;background:#0e2a2e}
+.nav .badge.g{color:#9dffd9;border-color:#2c8a6b}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="brand"><div class="logo">◆</div>
+    <div><div class="bname">INSIGHT</div><div class="bsub">端侧视觉智能体 · 全离线</div></div>
+  </div>
+  <div class="tabs"><a href="/" class="on">值守台</a><a href="/studio.html" class="">对话分析</a></div>
+  <div class="right"><span class="badge g" id="sysChip" title="系统自检">OFFLINE · LOCAL</span><span class="badge">18 W</span></div>
+</div>
+<main>
+  <section class="panel">
+    <h2>Scene / Camera</h2>
+    <div id="sceneWrap"><canvas id="scene" width="960" height="540"></canvas></div>
+    <div class="samples" id="samples"></div>
+    <div class="tools">
+      <input id="file" type="file" accept="image/*,video/*" hidden>
+      <label class="btn" for="file">上传视频 / 图片</label>
+      <button class="primary" id="guardBtn" onclick="toggleGuard()">开始值守</button>
+      <button id="zoneDangerBtn" onclick="toggleZoneEdit('danger')">框选危险区</button>
+      <button id="zoneDutyBtn" onclick="toggleZoneEdit('duty')">框选值守区</button>
+      <button onclick="resetZone()">重置区域</button>
+    </div>
+    <div id="hint" class="muted" style="font-size:12px;margin-top:6px"><b>危险区</b>：人员进去就报警（黄框）；<b>值守区</b>：必须一直有人，没人就报警（虚线框，有人绿、无人红）。上传一次 mp4 会保存为默认素材（两页共用）。</div>
+    <div id="guardMeta" class="muted" style="font-size:12px;margin-top:4px;color:#7fd6ff"></div>
+<div style="margin-top:6px;font-size:12px;display:flex;gap:12px;align-items:center;opacity:.85"><span>采样间隔</span><select onchange="setGuardParam('tickMs',this.value)"><option value="1000">1 秒</option><option value="2000" selected>2 秒</option><option value="3000">3 秒</option><option value="5000">5 秒</option></select><span>播放速率</span><select onchange="setGuardParam('rate',this.value)"><option value="0.25">0.25×</option><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></div>
+  </section>
+  <section class="panel">
+    <h2>值守面板</h2>
+    <div class="mode" id="modes" style="display:none"><button data-mode="auto" class="active" onclick="setMode('auto')">自动</button><button data-mode="guard" onclick="setMode('guard')">塔吊值守</button><button data-mode="ppe" onclick="setMode('ppe')">安全帽</button></div>
+    <textarea id="query" style="display:none">现在塔吊下面有人吗？</textarea>
+    <div class="tools" id="chips" style="display:none"></div>
+    <div class="tools" style="display:none"><button class="primary" onclick="runAgent()">运行 Agent</button><button onclick="quick('为什么刚才报警？')">为什么报警</button><button onclick="quick('今天有几次违规？')">今天几次</button><button onclick="newSession()">新会话</button></div>
+    <div id="status" class="status"><b>待机</b><span>选择场景后运行 Agent</span></div>
+    <div id="answer" class="muted" style="display:none">—</div>
+    <div id="trace" class="trace" style="display:none">—</div>
+    <h2 style="margin-top:12px">Findings</h2><div id="findings" class="muted">—</div>
+    <h2 style="margin-top:12px">Evidence</h2><div id="evidence" class="muted">—</div>
+  </section>
+</main>
+<div id="history" style="display:none"></div>
+<section class="panel bottom">
+  <div class="ledger-head">
+    <div>
+      <h2 style="margin:0">异常事件台账</h2>
+      <div class="muted" style="font-size:11px;margin-top:3px" id="evtTotal">一次告警 = 一条事件（危险区有人 / 值守区无人）</div>
+    </div>
+    <div class="askrow">
+      <input id="guardQ" placeholder="问台账：今天有几起告警？最近一起几点开始、几点结束？">
+      <button class="primary" onclick="askLedger()">问</button>
+    </div>
+  </div>
+  <div id="ledgerAnswer" class="muted" style="display:none"></div>
+  <div id="events" class="muted">暂无事件</div>
+</section>
+<div class="foot">Insight v1.1 · RexSeek-3B + Qwen2.5-1.5B · GroundingDINO-tiny · 全离线 · 国产 SoC · 18W</div>
+<script src="/console.js?v=6"></script>
+</body></html>

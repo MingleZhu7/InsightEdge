@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insight · 塔吊禁区值守</title>
+<style>
+body{margin:0;background:#071018;color:#d8f3ff;font:14px/1.55 system-ui}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px 22px;border-bottom:1px solid #1b3546}
+h1{margin:0;font-size:17px;letter-spacing:.06em}.sub{color:#6f93a5;font-size:12px;margin-left:9px}.badge{font-size:11px;padding:4px 8px;border:1px solid #2b6f72;border-radius:5px;color:#7ef0dc;background:#0e2a2e}
+main{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;padding:16px 22px}
+.panel{background:#0b1a25;border:1px solid #1b3546;border-radius:10px;padding:13px}
+.panel h2{font-size:11px;letter-spacing:.14em;color:#6f93a5;margin:0 0 9px;text-transform:uppercase}
+#wrap{position:relative;background:#050b10;border:1px solid #122b3a;border-radius:8px;min-height:300px;display:flex;justify-content:center;align-items:center;overflow:hidden}
+canvas{max-width:100%;max-height:560px;display:block}
+.tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}button{background:#123445;color:#7ef0dc;border:1px solid #2b6f72;border-radius:7px;padding:8px 12px;cursor:pointer;font:inherit}button.primary{background:#1a4a40;color:#9dffd9;border-color:#2c8a6b}button.danger{background:#3d1c1c;color:#ff9b8f;border-color:#8a3a32}
+input[type=file]{color:#6f93a5;font-size:12px}.status{padding:12px;border-radius:8px;border:1px solid #1f7a55;background:#0a1f19;margin-bottom:10px}.status.intrusion{border-color:#8a3a32;background:#260d10;color:#ffb3ad;animation:pulse 1s infinite}@keyframes pulse{50%{box-shadow:0 0 20px #ff4d4f55}}
+.status b{font-size:18px;display:block}.muted{color:#6f93a5}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:8px 0}.metric{background:#08131e;border:1px solid #163044;border-radius:7px;padding:8px}.metric b{font-size:17px;display:block}.metric span{font-size:10px;color:#6f93a5}
+textarea{width:100%;height:48px;background:#08131e;color:#d8f3ff;border:1px solid #24465a;border-radius:7px;padding:8px;font:inherit}
+.ev{display:flex;gap:9px;align-items:center;padding:8px;border:1px solid #163044;border-radius:7px;background:#08131e;margin:5px 0;font-size:12px}.ev b{color:#ff8f8f}.ev a{color:#35e0ff;margin-left:auto}
+#evidence img{max-width:100%;border:1px solid #163044;border-radius:7px;margin-top:8px}table{width:100%;border-collapse:collapse;font-size:11px}td,th{text-align:left;padding:5px;border-bottom:1px solid #122b3a;color:#b7dbe8}th{color:#6f93a5;font-weight:400}a{color:#35e0ff}
+</style></head>
+<body>
+<header><div><h1>Insight · 塔吊禁区值守</h1><span class="sub">固定摄像头 · 禁区入侵 · 本地告警</span></div><span class="badge">OFFLINE · LOCAL</span></header>
+<main>
+<section class="panel">
+  <h2>Live Camera / Zone</h2>
+  <div id="wrap"><canvas id="screen" width="960" height="540"></canvas></div>
+  <div class="tools"><input id="file" type="file" accept="video/*,image/*">
+    <button class="primary" onclick="start()">开始值守</button>
+    <button onclick="stop()">暂停</button>
+    <button class="danger" onclick="resetState()">重置事件</button>
+  </div>
+  <div class="muted" id="hint" style="margin-top:8px">上传塔吊区域视频/图片；黄色多边形为吊装禁区，人员进入即触发。</div>
+</section>
+<section class="panel">
+  <h2>Zone Status</h2>
+  <div id="status" class="status"><b>待机</b><span>上传视频后开始值守</span></div>
+  <div class="grid"><div class="metric"><b id="mInside">-</b><span>INSIDE ZONE</span></div><div class="metric"><b id="mPersons">-</b><span>PERSONS</span></div><div class="metric"><b id="mEvents">0</b><span>TODAY EVENTS</span></div><div class="metric"><b id="mLatency">-</b><span>FRAME LATENCY</span></div></div>
+  <h2 style="margin-top:14px">Policy</h2>
+  <textarea id="policy">只要有人进入塔吊下面的黄色禁区，就喊话、抓拍并告警。</textarea>
+  <div class="tools"><button onclick="parsePolicy()">LLM 解析策略</button></div>
+  <div id="policyOut" class="muted" style="font-size:12px;margin-top:6px">—</div>
+  <h2 style="margin-top:14px">Evidence</h2>
+  <div id="evidence" class="muted">暂无事件</div>
+  <h2 style="margin-top:14px">Agent</h2>
+  <textarea id="agentQ" style="height:40px">现在塔吊下面有人吗？</textarea>
+  <div class="tools"><button class="primary" onclick="runAgent()">运行 Agent</button><button onclick="document.getElementById('agentQ').value='今天有几次违规？'">今天几次</button><button onclick="document.getElementById('agentQ').value='为什么刚才报警？'">为什么报警</button></div>
+  <div id="agentOut" style="font-size:12px;margin-top:6px"></div>
+  <div id="agentTrace" class="muted" style="font-size:11px;margin-top:4px"></div>
+  <h2 style="margin-top:14px">Ask</h2>
+  <textarea id="ask" style="height:40px">为什么刚才报警？</textarea>
+  <div class="tools"><button onclick="askGuard()">追问</button><button onclick="document.getElementById('ask').value='今天有几次违规？'">今天几次</button></div>
+  <div id="askOut" class="muted" style="font-size:12px;margin-top:6px">—</div>
+</section>
+</main>
+<section class="panel" style="margin:0 22px 22px"><h2>Guard Event Ledger</h2><div id="events" class="muted">暂无事件</div></section>
+<script>
+const screen=document.getElementById('screen'),ctx=screen.getContext('2d');
+const zone=[[0.28,0.45],[0.78,0.45],[0.88,0.95],[0.18,0.95]];
+let src=null, timer=null, busy=false, sid='guard_'+Math.random().toString(36).slice(2,10);
+let lastEvents=0;
+function drawBase(){
+  const w=screen.width,h=screen.height;ctx.clearRect(0,0,w,h);
+  if(src){const sw=src.videoWidth||src.naturalWidth,sh=src.videoHeight||src.naturalHeight;if(sw&&sh){const s=Math.min(w/sw,h/sh),dw=sw*s,dh=sh*s;ctx.drawImage(src,(w-dw)/2,(h-dh)/2,dw,dh)}}
+  ctx.save();ctx.strokeStyle='#ffd84d';ctx.lineWidth=3;ctx.beginPath();
+  zone.forEach((p,i)=>{const x=p[0]*w,y=p[1]*h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.stroke();ctx.fillStyle='rgba(255,216,77,.08)';ctx.fill();ctx.restore();
+}
+function drawBoxes(persons){
+  const w=screen.width,h=screen.height;
+  (persons||[]).forEach((p,i)=>{const [x1,y1,x2,y2]=p.box;const col=p.inside?'#ff4d4f':'#2ee6a8';ctx.strokeStyle=col;ctx.lineWidth=3;ctx.strokeRect(x1,y1,x2-x1,y2-y1);ctx.fillStyle=col;ctx.font='bold 15px system-ui';ctx.fillText((p.inside?'INTRUSION ':'PERSON ')+(i+1),x1+3,Math.max(16,y1-6))});
+}
+function tick(){
+  if(!src||busy)return;busy=true;drawBase();
+  const data=screen.toDataURL('image/jpeg',.82);
+  fetch('/api/guard/frame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data,zone,session_id:sid,ts:Date.now()/1000})})
+   .then(r=>r.json()).then(d=>{
+     if(d.error)throw new Error(d.error);
+     drawBase();drawBoxes(d.persons||[]);
+     document.getElementById('mInside').textContent=d.inside;
+     document.getElementById('mPersons').textContent=(d.persons||[]).length;
+     document.getElementById('mLatency').textContent=(d.metrics?.perception_ms||0)+' ms';
+     const st=document.getElementById('status');
+     if(d.status==='intrusion'){st.className='status intrusion';st.innerHTML='<b>禁区入侵</b><span>人员进入塔吊吊装禁区，已启动本地告警</span>'}else if(d.status==='cleared'){st.className='status';st.innerHTML='<b>已清空</b><span>人员已离开禁区</span>'}else{st.className='status';st.innerHTML='<b>值守中</b><span>GPU 按事件触发，当前无人进入</span>'}
+     if(d.event){document.getElementById('mEvents').textContent=Number(document.getElementById('mEvents').textContent)+1;document.getElementById('evidence').innerHTML=`<div class="muted">${d.event.ts} · ${d.event.answer}</div><img src="${d.event.evidence}?t=${Date.now()}">`;loadEvents()}
+     else if(d.evidence&&!document.querySelector('#evidence img'))document.getElementById('evidence').innerHTML=`<img src="${d.evidence}?t=${Date.now()}">`;
+   }).catch(e=>{document.getElementById('hint').textContent='推理失败：'+e.message})
+   .finally(()=>{busy=false});
+}
+function start(){if(!src){document.getElementById('hint').textContent='请先上传视频/图片';return}if(timer)return;if(src.play)src.play();timer=setInterval(tick,650);document.getElementById('hint').textContent='值守中：NPU/GPU 事件链路运行';tick()}
+function stop(){clearInterval(timer);timer=null;if(src&&src.pause)src.pause()}
+function resetState(){sid='guard_'+Math.random().toString(36).slice(2,10);document.getElementById('mEvents').textContent='0'}
+document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);
+ if(f.type.startsWith('video/')){const v=document.createElement('video');v.src=url;v.muted=true;v.loop=true;v.playsInline=true;v.onloadeddata=()=>{src=v;screen.width=v.videoWidth||960;screen.height=v.videoHeight||540;drawBase();document.getElementById('hint').textContent='视频已加载，点击开始值守'}}else{const im=new Image();im.onload=()=>{src=im;screen.width=im.naturalWidth;screen.height=im.naturalHeight;drawBase();document.getElementById('hint').textContent='图片已加载，点击开始值守'};im.src=url}
+});
+async function parsePolicy(){const t=document.getElementById('policy').value;try{const r=await fetch('/api/guard/policy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t,zone})});const d=await r.json();document.getElementById('policyOut').textContent=(d.message||'')+' · duration '+d.duration_s+'s';}catch(e){document.getElementById('policyOut').textContent='失败：'+e.message}}
+async function runAgent(){
+  const q=document.getElementById('agentQ').value;if(!q)return;
+  document.getElementById('agentOut').textContent='Agent 执行中…';document.getElementById('agentTrace').textContent='';
+  const image=src?screen.toDataURL('image/jpeg',.82):null;
+  try{const r=await fetch('/api/guard/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,image,zone,session_id:sid,ts:Date.now()/1000})});const d=await r.json();if(!r.ok)throw new Error(d.error||('HTTP '+r.status));
+    document.getElementById('agentOut').innerHTML=`<b>${d.intent} · ${d.chosen_by}</b><br>${d.answer}`;
+    document.getElementById('agentTrace').innerHTML=(d.trace||[]).map(t=>{if(t.type==='thought')return `<div>✦ ${t.text}</div>`;if(t.type==='plan')return `<div>计划：${(t.steps||[]).map(x=>x.tool).join(' → ')}</div>`;if(t.type==='tool')return `<div>${t.tool} · ${t.observation||''}</div>`;if(t.type==='recovery')return `<div style="color:#ffd84d">! ${t.text}</div>`;return ''}).join('');
+    if(d.evidence)document.getElementById('evidence').innerHTML=`<img src="${d.evidence}?t=${Date.now()}">`;
+  }catch(e){document.getElementById('agentOut').textContent='失败：'+e.message}
+}
+async function askGuard(){
+  const q=document.getElementById('ask').value;if(!q)return;
+  document.getElementById('askOut').textContent='思考中…';
+  try{const r=await fetch('/api/guard/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});const d=await r.json();document.getElementById('askOut').textContent=d.answer||d.error||'—';if(d.evidence){document.getElementById('evidence').innerHTML=`<img src="${d.evidence}?t=${Date.now()}">`}}catch(e){document.getElementById('askOut').textContent='失败：'+e.message}
+}
+async function loadEvents(){try{const r=await fetch('/api/guard/events');const d=await r.json();const ev=d.events||[];document.getElementById('mEvents').textContent=ev.length;document.getElementById('events').innerHTML=ev.length?`<table><tr><th>时间</th><th>事件</th><th>人数</th><th>证据</th></tr>${ev.map(x=>`<tr><td>${x.ts}</td><td>${x.answer}</td><td>${x.persons||'-'}</td><td>${x.evidence?`<a href="${x.evidence}" target="_blank">查看</a>`:'-'}</td></tr>`).join('')}</table>`:'<span class="muted">暂无事件</span>'}catch(e){}}
+loadEvents();drawBase();
+</script></body></html>

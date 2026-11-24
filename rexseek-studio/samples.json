@@ -1,0 +1,54 @@
+{
+  "samples": [
+    {
+      "id": "helmet_all",
+      "kind": "image",
+      "title": "工地入口 · 全员合规",
+      "subtitle": "安全帽 · 对话演示",
+      "file": "assets/samples/helmet_all.jpg",
+      "width": 860,
+      "height": 573,
+      "gdino_prompt": "person. safety helmet. hard hat.",
+      "suggestions": [
+        "画面里有几个人？",
+        "他们都戴安全帽了吗？",
+        "左边的人戴安全帽了吗？"
+      ],
+      "live_suggestions": [
+        "画面里有几个人？",
+        "他们都戴安全帽了吗？",
+        "左边的人戴安全帽了吗？"
+      ],
+      "intents": [
+        {"id": "count", "keywords": ["几个", "多少", "人数"], "count": true, "en_query": "person", "zh_label": "人"},
+        {"id": "helmet", "keywords": ["安全帽", "戴"], "en_query": "person. safety helmet", "zh_label": "人员"}
+      ],
+      "default_reply": "这是工地入口场景，可以问我人数、佩戴安全帽情况，或让我指出具体人员。"
+    },
+    {
+      "id": "helmet_mixed",
+      "kind": "image",
+      "title": "工地入口 · 违规识别",
+      "subtitle": "未戴安全帽 · 属性判断",
+      "file": "assets/samples/helmet_mixed.jpg",
+      "width": 860,
+      "height": 573,
+      "gdino_prompt": "person. safety helmet. hard hat.",
+      "suggestions": [
+        "找出没戴安全帽的人",
+        "画面里有几个人？",
+        "右边的人戴安全帽了吗？"
+      ],
+      "live_suggestions": [
+        "找出没戴安全帽的人",
+        "画面里有几个人？",
+        "右边的人戴安全帽了吗？"
+      ],
+      "intents": [
+        {"id": "count", "keywords": ["几个", "多少", "人数"], "count": true, "en_query": "person", "zh_label": "人"},
+        {"id": "helmet", "keywords": ["安全帽", "没戴", "未戴", "戴"], "en_query": "person. safety helmet", "zh_label": "人员"}
+      ],
+      "default_reply": "这是工地入口场景，可以直接问“找出没戴安全帽的人”，也可以问人数或某个人的佩戴情况。"
+    }
+  ]
+}

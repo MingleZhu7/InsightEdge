@@ -1,0 +1,954 @@
+{
+  "version": 1,
+  "model": "RexSeek-3B",
+  "samples": [
+    {
+      "id": "tomatoes",
+      "kind": "image",
+      "title": "番茄成熟度",
+      "subtitle": "计数 · 属性判断",
+      "file": "assets/samples/demo9.jpg",
+      "width": 1083,
+      "height": 1508,
+      "suggestions": [
+        "哪些番茄已经熟了？",
+        "画面里一共有几颗番茄？",
+        "找一找最左边那颗"
+      ],
+      "objects": [
+        {
+          "id": "ripe_center",
+          "label": "成熟的红番茄（中央）",
+          "short": "红番茄·中",
+          "color": "#ff7a6b",
+          "box": [
+            0.3,
+            0.3,
+            0.66,
+            0.545
+          ],
+          "score": 0.97,
+          "where": "画面中央偏上"
+        },
+        {
+          "id": "ripe_right",
+          "label": "成熟的红番茄（右侧）",
+          "short": "红番茄·右",
+          "color": "#ffb547",
+          "box": [
+            0.665,
+            0.39,
+            0.895,
+            0.6
+          ],
+          "score": 0.96,
+          "where": "中央红番茄的右后方"
+        },
+        {
+          "id": "orange",
+          "label": "半熟的橙色番茄",
+          "short": "橙色番茄",
+          "color": "#b6f36b",
+          "box": [
+            0.29,
+            0.552,
+            0.575,
+            0.735
+          ],
+          "score": 0.94,
+          "where": "中央红番茄的下方"
+        },
+        {
+          "id": "green_bottom",
+          "label": "未熟的青番茄",
+          "short": "青番茄",
+          "color": "#35e0ff",
+          "box": [
+            0.286,
+            0.696,
+            0.646,
+            0.962
+          ],
+          "score": 0.95,
+          "where": "画面最下方"
+        },
+        {
+          "id": "pale_left",
+          "label": "青色小番茄（左下）",
+          "short": "小青果",
+          "color": "#a78bfa",
+          "box": [
+            0.139,
+            0.686,
+            0.286,
+            0.816
+          ],
+          "score": 0.89,
+          "where": "左下方枝叶间"
+        },
+        {
+          "id": "pale_top",
+          "label": "浅色小番茄（右上）",
+          "short": "浅色果",
+          "color": "#7cc4ff",
+          "box": [
+            0.637,
+            0.116,
+            0.757,
+            0.206
+          ],
+          "score": 0.84,
+          "where": "右上方枝条后"
+        }
+      ],
+      "default_reply": "这是一串正在成熟中的番茄：中央和右侧的两颗已经转红，下方还有橙色、青色的小果。可以问我成熟度、数量，或者让我定位某一颗。",
+      "intents": [
+        {
+          "id": "ripe",
+          "keywords": [
+            "熟",
+            "成熟",
+            "红色",
+            "红的",
+            "红了",
+            "可以吃"
+          ],
+          "object_ids": [
+            "ripe_center",
+            "ripe_right"
+          ],
+          "reply": "已经成熟的是这两颗红色番茄：中央一颗最大，右后方一颗稍小，颜色已经转为饱和的红色。\n\n定位依据：果皮颜色饱和度高、无明显青肩，属于完熟阶段。",
+          "en_query": "the ripe red tomatoes",
+          "zh_label": "成熟的番茄"
+        },
+        {
+          "id": "count",
+          "keywords": [
+            "几个",
+            "几颗",
+            "多少",
+            "数量",
+            "数一数"
+          ],
+          "count": true,
+          "object_ids": [
+            "ripe_center",
+            "ripe_right",
+            "orange",
+            "green_bottom",
+            "pale_left",
+            "pale_top"
+          ],
+          "reply": "画面里一共能看到 {count} 颗番茄：2 颗成熟的红番茄、1 颗橙黄色半熟果、1 颗青色未熟果，还有 2 颗被枝叶遮住的浅色小果。",
+          "en_query": "all tomatoes",
+          "zh_label": "番茄"
+        },
+        {
+          "id": "left",
+          "keywords": [
+            "左边",
+            "最左",
+            "左侧"
+          ],
+          "object_ids": [
+            "pale_left"
+          ],
+          "reply": "最左边的是这颗浅绿色的小番茄，藏在左下方的枝叶间，体积明显比主串上的果子小。",
+          "en_query": "the leftmost tomato",
+          "zh_label": "最左边的番茄"
+        },
+        {
+          "id": "green",
+          "keywords": [
+            "青",
+            "未熟",
+            "没熟",
+            "生"
+          ],
+          "object_ids": [
+            "green_bottom",
+            "pale_left",
+            "pale_top"
+          ],
+          "reply": "还没熟的是画面下方的青绿色番茄、左下角的小青果，以及右上方被枝条挡住的那颗浅色果。",
+          "en_query": "the green tomatoes",
+          "zh_label": "未熟的番茄"
+        },
+        {
+          "id": "left_green",
+          "keywords": [
+            "左下",
+            "青"
+          ],
+          "object_ids": [
+            "pale_left"
+          ],
+          "en_query": "the small green tomato on the left",
+          "zh_label": "左边的青番茄",
+          "reply": "左下方的枝叶间有一颗青色小番茄，还没有成熟。"
+        }
+      ],
+      "gdino_prompt": "tomato.",
+      "live_suggestions": [
+        "哪些番茄已经熟了？",
+        "左下角的青番茄在哪？",
+        "画面里一共有几颗番茄？"
+      ]
+    },
+    {
+      "id": "proposal",
+      "kind": "image",
+      "title": "桥上的求婚",
+      "subtitle": "人物指代 · 关系推理",
+      "file": "assets/samples/demo1.jpg",
+      "width": 1000,
+      "height": 1504,
+      "suggestions": [
+        "穿蓝色裙子的女士在哪里？",
+        "正在求婚的是哪位？",
+        "画面里一共有几个人？"
+      ],
+      "objects": [
+        {
+          "id": "woman_blue",
+          "label": "穿蓝色裙子的女士",
+          "short": "蓝裙女士",
+          "color": "#35e0ff",
+          "box": [
+            0.205,
+            0.36,
+            0.365,
+            0.835
+          ],
+          "score": 0.97,
+          "where": "画面左侧，靠着桥栏站立"
+        },
+        {
+          "id": "man_kneel",
+          "label": "单膝跪地的男士",
+          "short": "求婚男士",
+          "color": "#ffb547",
+          "box": [
+            0.425,
+            0.405,
+            0.845,
+            0.85
+          ],
+          "score": 0.95,
+          "where": "画面中央偏右，正对女士"
+        },
+        {
+          "id": "bystanders",
+          "label": "右侧桥上的路人",
+          "short": "路人",
+          "color": "#a78bfa",
+          "box": [
+            0.765,
+            0.43,
+            0.995,
+            0.665
+          ],
+          "score": 0.86,
+          "where": "画面右侧远处"
+        }
+      ],
+      "default_reply": "这是一张在威斯敏斯特桥上拍摄的求婚照片：左侧的女士穿蓝色连衣裙靠在桥栏边，右侧的男士单膝跪地。可以问我「她在哪」「他在做什么」或者「画面里有几个人」。",
+      "intents": [
+        {
+          "id": "woman",
+          "keywords": [
+            "蓝色",
+            "蓝裙",
+            "裙子",
+            "裙",
+            "女士",
+            "女生",
+            "女人",
+            "女的",
+            "她"
+          ],
+          "object_ids": [
+            "woman_blue"
+          ],
+          "reply": "找到了。她站在画面左侧、靠着桥栏，穿一条宝蓝色连衣裙，一只手遮着脸，身体微微侧向男士。\n\n定位依据：蓝色裙装 + 站立姿态 + 与跪姿男士相对的位置关系。",
+          "en_query": "the person wearing a blue dress",
+          "zh_label": "穿蓝色裙子的女士"
+        },
+        {
+          "id": "man",
+          "keywords": [
+            "求婚",
+            "跪",
+            "男士",
+            "男人",
+            "男的",
+            "他",
+            "戒指"
+          ],
+          "object_ids": [
+            "man_kneel"
+          ],
+          "reply": "跪地求婚的男士在画面中央偏右。他单膝跪在石板路上，面向左侧的女士，手里拿着戒指盒。\n\n定位依据：单膝跪姿 + 面向女士 + 手部持物动作。",
+          "en_query": "the man proposing",
+          "zh_label": "求婚的男士"
+        },
+        {
+          "id": "couple",
+          "keywords": [
+            "情侣",
+            "两个人",
+            "两人",
+            "关系",
+            "在做什么",
+            "干嘛",
+            "发生"
+          ],
+          "object_ids": [
+            "woman_blue",
+            "man_kneel"
+          ],
+          "reply": "画面里是一对情侣：女士在左侧靠着桥栏站立，男士在中央偏右单膝跪地求婚，手里举着戒指盒。背景是威斯敏斯特桥和大本钟。",
+          "en_query": "the couple",
+          "zh_label": "这对情侣"
+        },
+        {
+          "id": "count",
+          "keywords": [
+            "几个",
+            "多少",
+            "人数",
+            "几个人"
+          ],
+          "count": true,
+          "object_ids": [
+            "woman_blue",
+            "man_kneel",
+            "bystanders"
+          ],
+          "reply": "画面中清晰可见的有 {count} 个人：左侧的女士、跪地的男士，以及右后方桥上的路人。",
+          "en_query": "all people",
+          "zh_label": "画面中的人物"
+        },
+        {
+          "id": "bystanders",
+          "keywords": [
+            "背景",
+            "路人",
+            "后面"
+          ],
+          "object_ids": [
+            "bystanders"
+          ],
+          "en_query": "the people in the background",
+          "zh_label": "背景里的路人",
+          "reply": "画面右后方的桥上有几位路人，我把他们都框出来了。"
+        }
+      ],
+      "gdino_prompt": "person.",
+      "live_suggestions": [
+        "穿蓝色裙子的女士在哪里？",
+        "正在求婚的是哪位？",
+        "背景里的路人有哪些？"
+      ]
+    },
+    {
+      "id": "webinar",
+      "kind": "image",
+      "title": "讲者海报",
+      "subtitle": "文字检索 · 人脸对应",
+      "file": "assets/samples/demo3.jpg",
+      "width": 1786,
+      "height": 1006,
+      "suggestions": [
+        "哪位是 Mr Alvin KWOCK？",
+        "讲者里有哪几位女性？",
+        "找出 Ms Theresa CHONG"
+      ],
+      "objects": [
+        {
+          "id": "alvin",
+          "label": "Mr Alvin KWOCK",
+          "short": "Alvin KWOCK",
+          "color": "#35e0ff",
+          "box": [
+            0.632,
+            0.125,
+            0.742,
+            0.305
+          ],
+          "score": 0.96,
+          "where": "右侧讲者区第一行左侧"
+        },
+        {
+          "id": "geraldine",
+          "label": "Ms Geraldine WAI",
+          "short": "Geraldine WAI",
+          "color": "#ffb547",
+          "box": [
+            0.862,
+            0.135,
+            0.965,
+            0.315
+          ],
+          "score": 0.95,
+          "where": "右侧讲者区第一行右侧"
+        },
+        {
+          "id": "theresa",
+          "label": "Ms Theresa CHONG",
+          "short": "Theresa CHONG",
+          "color": "#a78bfa",
+          "box": [
+            0.855,
+            0.42,
+            0.95,
+            0.6
+          ],
+          "score": 0.94,
+          "where": "右侧讲者区第二行最右"
+        },
+        {
+          "id": "eliza",
+          "label": "Ms Eliza NG",
+          "short": "Eliza NG",
+          "color": "#b6f36b",
+          "box": [
+            0.643,
+            0.705,
+            0.744,
+            0.878
+          ],
+          "score": 0.93,
+          "where": "右侧讲者区最下方左侧"
+        },
+        {
+          "id": "sophia",
+          "label": "Ms Sophia SUNG",
+          "short": "Sophia SUNG",
+          "color": "#ff7a6b",
+          "box": [
+            0.852,
+            0.705,
+            0.95,
+            0.875
+          ],
+          "score": 0.93,
+          "where": "右侧讲者区最下方右侧"
+        },
+        {
+          "id": "title",
+          "label": "海报主标题",
+          "short": "主标题",
+          "color": "#7cc4ff",
+          "box": [
+            0.04,
+            0.205,
+            0.558,
+            0.372
+          ],
+          "score": 0.99,
+          "where": "左侧标题区"
+        }
+      ],
+      "default_reply": "这是一张 HKPC Academy 的网络研讨会讲者海报，主题是「Maintaining Employee Mental Wellbeing in Face of Adversity」。我可以把讲者姓名和头像一一对应起来。",
+      "intents": [
+        {
+          "id": "alvin",
+          "keywords": [
+            "alvin",
+            "kwock",
+            "第一位",
+            "第一行"
+          ],
+          "object_ids": [
+            "alvin"
+          ],
+          "reply": "Mr Alvin KWOCK 在右侧讲者区的第一行左侧——戴黑框眼镜、穿深色西装的男士头像，下方标注 Founder & CEO, OneDegree。\n\n定位依据：海报上的姓名文字 + 对应头像位置。",
+          "en_query": "Mr Alvin KWOCK",
+          "zh_label": "Mr Alvin KWOCK"
+        },
+        {
+          "id": "female",
+          "keywords": [
+            "女性",
+            "女士",
+            "女的",
+            "女讲者",
+            "woman",
+            "women"
+          ],
+          "object_ids": [
+            "geraldine",
+            "theresa",
+            "eliza",
+            "sophia"
+          ],
+          "reply": "讲者区共有 4 位女性：Ms Geraldine WAI（第一行右）、Ms Theresa CHONG（第二行右）、Ms Eliza NG 和 Ms Sophia SUNG（最下一行）。已逐一框出。",
+          "en_query": "the female speakers",
+          "zh_label": "女性讲者"
+        },
+        {
+          "id": "theresa",
+          "keywords": [
+            "theresa",
+            "teresa",
+            "chong"
+          ],
+          "object_ids": [
+            "theresa"
+          ],
+          "reply": "Ms Theresa CHONG 位于右侧讲者区第二行最右侧——深色长发、浅色背景的女士头像，职务是 Swire Coca-Cola HK Ltd 的人力资源总监。",
+          "en_query": "Ms Theresa CHONG",
+          "zh_label": "Ms Theresa CHONG"
+        },
+        {
+          "id": "eliza",
+          "keywords": [
+            "eliza",
+            "ng"
+          ],
+          "object_ids": [
+            "eliza"
+          ],
+          "reply": "Ms Eliza NG 在讲者区最下方左侧，标注为 HKPC 的首席人力与文化官（Chief People & Culture Officer）。",
+          "en_query": "Ms Eliza NG",
+          "zh_label": "Ms Eliza NG"
+        },
+        {
+          "id": "title",
+          "keywords": [
+            "标题",
+            "主题",
+            "写的是",
+            "海报告诉",
+            "活动"
+          ],
+          "object_ids": [
+            "title"
+          ],
+          "reply": "海报主标题是「Maintaining Employee Mental Wellbeing in Face of Adversity」，主办方为 HKPC Academy，形式是免费网络研讨会，时间为 2021-03-25 16:00–17:30。",
+          "en_query": "the poster title",
+          "zh_label": "海报标题"
+        },
+        {
+          "id": "glasses_man",
+          "keywords": [
+            "眼镜",
+            "左上"
+          ],
+          "object_ids": [
+            "alvin"
+          ],
+          "en_query": "the man with glasses in the top left",
+          "zh_label": "戴眼镜的男士",
+          "reply": "左上角戴黑框眼镜、穿深色西装的男士是 Mr Alvin KWOCK。"
+        },
+        {
+          "id": "top_right_woman",
+          "keywords": [
+            "右上角",
+            "右上"
+          ],
+          "object_ids": [
+            "geraldine"
+          ],
+          "en_query": "the woman in the top right",
+          "zh_label": "右上角的女士",
+          "reply": "右上角头像对应的是 Ms Geraldine WAI。"
+        }
+      ],
+      "gdino_prompt": "person.",
+      "live_suggestions": [
+        "讲者里有哪几位女性？",
+        "左上角戴眼镜的男士是谁？",
+        "右上角的女士是谁？"
+      ],
+      "roi": [
+        0.53,
+        0.05
+      ]
+    },
+    {
+      "id": "team",
+      "kind": "image",
+      "title": "团队合影",
+      "subtitle": "人群计数 · 服饰检索",
+      "file": "assets/samples/demo6.jpg",
+      "width": 1536,
+      "height": 1024,
+      "suggestions": [
+        "穿橙色连衣裙的女士在哪？",
+        "谁穿着红色上衣？",
+        "合影里大概有多少人？"
+      ],
+      "objects": [
+        {
+          "id": "orange_dress",
+          "label": "穿橙色连衣裙的女士",
+          "short": "橙色连衣裙",
+          "color": "#ffb547",
+          "box": [
+            0.573,
+            0.4,
+            0.705,
+            0.885
+          ],
+          "score": 0.95,
+          "where": "画面右前方，靠近楼梯"
+        },
+        {
+          "id": "red_top",
+          "label": "穿红色上衣的女士",
+          "short": "红色上衣",
+          "color": "#ff7a6b",
+          "box": [
+            0.79,
+            0.415,
+            0.885,
+            0.775
+          ],
+          "score": 0.93,
+          "where": "画面最右侧"
+        },
+        {
+          "id": "pink_front",
+          "label": "穿粉色上衣的女士",
+          "short": "粉色上衣",
+          "color": "#a78bfa",
+          "box": [
+            0.8,
+            0.635,
+            0.945,
+            0.98
+          ],
+          "score": 0.91,
+          "where": "画面右下角前景"
+        },
+        {
+          "id": "bald_blue",
+          "label": "左侧穿蓝衬衫的男士",
+          "short": "蓝衬衫男士",
+          "color": "#35e0ff",
+          "box": [
+            0.045,
+            0.355,
+            0.145,
+            0.63
+          ],
+          "score": 0.9,
+          "where": "画面最左侧，扶着栏杆"
+        }
+      ],
+      "default_reply": "这是一张在楼梯上拍摄的团队合影，大约 30 人，前排几位穿亮色衣服的人最好定位。可以按服饰、位置或人数来提问。",
+      "intents": [
+        {
+          "id": "orange",
+          "keywords": [
+            "橙色",
+            "橘色",
+            "橙裙",
+            "连衣裙"
+          ],
+          "object_ids": [
+            "orange_dress"
+          ],
+          "reply": "穿橙色连衣裙的女士在画面右前方、靠近楼梯的位置，正面对镜头微笑，双手交叠在身前。\n\n定位依据：橙色长裙 + 前排站位 + 相较于周围的显著颜色。",
+          "en_query": "the woman in the orange dress",
+          "zh_label": "橙色连衣裙女士"
+        },
+        {
+          "id": "red",
+          "keywords": [
+            "红色",
+            "红的",
+            "红衣服",
+            "红衣"
+          ],
+          "object_ids": [
+            "red_top"
+          ],
+          "reply": "穿红色上衣的女士在画面最右侧，留着深色长发，站在粉色上衣女士的后方。",
+          "en_query": "the woman in the red top",
+          "zh_label": "红色上衣女士"
+        },
+        {
+          "id": "pink",
+          "keywords": [
+            "粉色",
+            "粉衣",
+            "浅粉"
+          ],
+          "object_ids": [
+            "pink_front"
+          ],
+          "reply": "穿粉色上衣的女士在画面右下角的前景位置，穿牛仔裤，是离镜头最近的人之一。",
+          "en_query": "the woman in the pink top in the foreground",
+          "zh_label": "粉色上衣女士"
+        },
+        {
+          "id": "count",
+          "keywords": [
+            "几个",
+            "多少",
+            "人数",
+            "多少人",
+            "几位"
+          ],
+          "count": true,
+          "count_value": 30,
+          "object_ids": [],
+          "reply": "这是一张团队合影，画面里大约有 {count} 人，分布在楼梯和栏杆两侧。需要的话我可以继续定位其中某一位。",
+          "en_query": "all people",
+          "zh_label": "合影里的人"
+        },
+        {
+          "id": "far_left",
+          "keywords": [
+            "最左"
+          ],
+          "object_ids": [
+            "bald_blue"
+          ],
+          "en_query": "the person on the far left",
+          "zh_label": "最左边的人",
+          "reply": "最左边是穿浅蓝色衬衫、扶着栏杆的男士。"
+        }
+      ],
+      "gdino_prompt": "person.",
+      "live_suggestions": [
+        "穿橙色连衣裙的女士在哪？",
+        "谁穿着红色上衣？",
+        "最左边的人是谁？"
+      ],
+      "box_threshold": 0.25
+    },
+    {
+      "id": "highway",
+      "kind": "video",
+      "title": "高速公路跟拍",
+      "subtitle": "视频目标跟踪",
+      "file": "assets/video/highway.mp4",
+      "width": 1280,
+      "height": 720,
+      "duration": 2.23,
+      "poster": "assets/video/highway_poster.jpg",
+      "suggestions": [
+        "画面里有哪些车？",
+        "跟踪那辆白色大巴",
+        "右边的摩托车手呢？"
+      ],
+      "objects": [
+        {
+          "id": "bus",
+          "label": "白色 PREVOST 大巴",
+          "short": "白色大巴",
+          "color": "#35e0ff",
+          "box": [
+            0.575,
+            0.055,
+            1.0,
+            0.72
+          ],
+          "track": [
+            {
+              "t": 0.0,
+              "box": [
+                0.578,
+                0.07,
+                1.0,
+                0.72
+              ]
+            },
+            {
+              "t": 0.7,
+              "box": [
+                0.548,
+                0.16,
+                1.0,
+                0.88
+              ]
+            },
+            {
+              "t": 1.5,
+              "box": [
+                0.527,
+                0.19,
+                1.0,
+                0.95
+              ]
+            },
+            {
+              "t": 2.23,
+              "box": [
+                0.515,
+                0.21,
+                1.0,
+                1.0
+              ]
+            }
+          ],
+          "score": 0.96,
+          "where": "画面右侧"
+        },
+        {
+          "id": "suv",
+          "label": "前方黑色 SUV",
+          "short": "黑色 SUV",
+          "color": "#ffb547",
+          "box": [
+            0.4,
+            0.38,
+            0.45,
+            0.46
+          ],
+          "track": [
+            {
+              "t": 0.0,
+              "box": [
+                0.405,
+                0.363,
+                0.452,
+                0.44
+              ]
+            },
+            {
+              "t": 1.1,
+              "box": [
+                0.395,
+                0.392,
+                0.45,
+                0.468
+              ]
+            },
+            {
+              "t": 2.23,
+              "box": [
+                0.4,
+                0.402,
+                0.456,
+                0.477
+              ]
+            }
+          ],
+          "score": 0.9,
+          "where": "正前方车道"
+        },
+        {
+          "id": "rider",
+          "label": "右侧并列的摩托车骑手",
+          "short": "摩托车手",
+          "color": "#a78bfa",
+          "box": [
+            0.79,
+            0.47,
+            1.0,
+            1.0
+          ],
+          "track": [
+            {
+              "t": 0.0,
+              "box": [
+                0.79,
+                0.47,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "t": 0.55,
+              "box": [
+                0.86,
+                0.6,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "t": 0.95,
+              "box": [
+                0.93,
+                0.72,
+                1.0,
+                1.0
+              ]
+            }
+          ],
+          "score": 0.88,
+          "where": "画面右缘，随后驶出"
+        }
+      ],
+      "default_reply": "这是一段摩托车第一视角的高速公路片段：右侧是白色 PREVOST 大巴，前方是黑色 SUV，左侧远处还有一辆白色轿车。框选会跟随播放时间移动。",
+      "intents": [
+        {
+          "id": "vehicles",
+          "keywords": [
+            "车",
+            "哪些车",
+            "车辆",
+            "都有什么",
+            "有什么"
+          ],
+          "object_ids": [
+            "bus",
+            "suv"
+          ],
+          "reply": "能稳定跟踪的有 2 台车：右侧的白色 PREVOST 大巴和正前方的黑色 SUV。左侧远处还有一辆白色轿车，但它在画面里太小（不到 30 像素宽），模型没有给出可靠框选。",
+          "en_query": "all vehicles",
+          "zh_label": "车辆"
+        },
+        {
+          "id": "bus",
+          "keywords": [
+            "大巴",
+            "巴士",
+            "客车",
+            "prevost"
+          ],
+          "object_ids": [
+            "bus"
+          ],
+          "reply": "正在跟踪右侧的白色 PREVOST 大巴：它从画面右缘驶入，随着镜头转向逐渐占据右侧大部分画面。\n\n跟踪依据：车身纹理与车窗结构在连续帧中保持一致。",
+          "en_query": "the white bus",
+          "zh_label": "白色大巴"
+        },
+        {
+          "id": "rider",
+          "keywords": [
+            "摩托",
+            "骑手",
+            "摩托车"
+          ],
+          "object_ids": [
+            "rider"
+          ],
+          "reply": "画面右缘有一名并列行驶的摩托车骑手，约 1 秒后驶出画面。跟踪框已按这个时间范围绑定。",
+          "en_query": "the motorcycle rider",
+          "zh_label": "摩托车手"
+        },
+        {
+          "id": "count",
+          "keywords": [
+            "几辆车",
+            "多少辆",
+            "几台"
+          ],
+          "count": true,
+          "object_ids": [
+            "bus",
+            "suv"
+          ],
+          "reply": "画面里能可靠框出的有 {count} 台车：白色大巴和黑色 SUV。左侧远处还有一辆白色轿车，尺寸太小，未计入。",
+          "en_query": "all vehicles",
+          "zh_label": "车辆"
+        }
+      ],
+      "gdino_prompt": "bus. car. motorcycle.",
+      "live_suggestions": [
+        "画面里有哪些车？",
+        "找出那辆白色大巴",
+        "右边的摩托车手呢？"
+      ],
+      "box_threshold": 0.4
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+config,attribute,position,interaction,reasoning,celebrity,domain_avg,pooled_F1@0.5,pooled_F1@0.5:0.95,boxes_per_img,detector_latency_ms,note
+"deployed: YOLOE-26l person @ NPU INT8 (split outputs)",0.8274,0.7000,0.5433,0.6728,0.9873,0.7462,0.7468,0.4529,10.9,51.7,"delivery config; 51.7 ms includes transfer"
+"ref: GD graft448 + L towers (GPU)",0.8920,0.5415,0.6384,0.6722,0.9873,0.7463,0.7475,0.6870,8.5,92.6,"official RexSeek grafted detector, person prompt, thr 0.25"
+"ref: stock HF GroundingDINO-tiny + L towers",0.8920,0.6958,0.5283,0.6881,0.9873,0.7583,0.7602,0.7127,8.5,450.0,"800x1333 fp32, thr 0.25"
+"ref: YOLOE-26l native PyTorch predict (GPU)",0.8312,0.6500,0.4950,0.6981,0.9873,0.7323,0.7338,0.5640,7.1,138.4,"sigmoid + conf 0.25 + ultralytics NMS"
+"ceiling: annotation candidates + L towers",0.9057,0.7958,0.5896,0.6058,0.9373,0.7668,0.7681,0.7657,7.2,,"dataset-provided candidate boxes (<=12)"
+"history: v1 DINO + ConvNeXt-B/ViT-B (100 refs)",,,0.314,,0.912,0.6312,,,,"R per domain: attribute .867 position .804 interaction .314 reasoning .549 celebrity .912; 100 refs, dataset candidates"
+"v1 (board, DINO+ViT-B+ConvNeXt-B)",0.7325,0.7309,0.3268,0.4980,0.9373,0.6451,0.6459,0.6453,8.3,,216.2,"dataset candidates 8.3/ref; LLM aligned to 78.5 ms; rejection 11/20"
+

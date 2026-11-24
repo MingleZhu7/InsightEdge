@@ -1,0 +1,33 @@
+# 忽略权重、数据与运行产物
+*.pt
+*.pth
+*.onnx
+*.cix
+*.engine
+*.safetensors
+*.gguf
+*.bin
+*.npy
+*.npz
+
+# 运行产物
+__pycache__/
+*.pyc
+*.log
+*.pid
+.work/
+data/*.db
+data/*.db-*
+data/evidence/
+web/media/
+web/data/
+
+# 评测原始数据（HumanRef 属第三方数据集，不入库）
+eval/annot_strat120.json
+bench/imgs/
+
+# 环境
+.venv/
+venv/
+node_modules/
+.DS_Store

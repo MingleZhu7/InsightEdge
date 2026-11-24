@@ -1,0 +1,40 @@
+{
+  "media": [
+    {
+      "id": "site_20261122_193841",
+      "file": "media/site_20261122_193841.mp4",
+      "poster": "media/site_20261122_193841.jpg",
+      "title": "现场视频 · 塔吊禁区",
+      "subtitle": "本地视频 · 逐帧值守",
+      "width": 1280,
+      "height": 720,
+      "duration": 10.08,
+      "size": 1555631,
+      "created": "2026-11-22 19:38:41"
+    },
+    {
+      "id": "site_20261122_190843",
+      "file": "media/site_20261122_190843.mp4",
+      "poster": "media/site_20261122_190843.jpg",
+      "title": "现场视频 · 塔吊禁区",
+      "subtitle": "本地视频 · 逐帧值守",
+      "width": 1280,
+      "height": 720,
+      "duration": 10.08,
+      "size": 1251177,
+      "created": "2026-11-22 19:08:43"
+    },
+    {
+      "id": "site_demo",
+      "file": "media/site_demo.mp4",
+      "poster": "media/site_demo.jpg",
+      "title": "工地现场 · 塔吊吊装禁区",
+      "subtitle": "本地视频 · 一次进入记一条",
+      "width": 1280,
+      "height": 720,
+      "duration": 10.04,
+      "size": 1533219,
+      "created": "2026-11-22 16:45:00"
+    }
+  ]
+}

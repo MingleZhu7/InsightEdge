@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN" translate="no">
+<head>
+<meta charset="UTF-8" /><meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RexSeek Studio — 视觉指代定位</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b12'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%235eead4' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%235eead4'/%3E%3C/svg%3E" />
+<style id="unifiedNav">
+.nav{display:flex;align-items:center;gap:18px;padding:11px 22px;border-bottom:1px solid #1b3546;background:linear-gradient(180deg,#081620,#071018)}
+.nav .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#5eead4,#7cc4ff);display:grid;place-items:center;font-weight:800;color:#04121a;font-size:15px}
+.nav .brand{display:flex;align-items:center;gap:10px}
+.nav .bname{font-size:16px;font-weight:600;letter-spacing:.08em;color:#d8f3ff}
+.nav .bsub{font-size:11px;color:#6f93a5;letter-spacing:.04em}
+.nav .tabs{display:flex;gap:4px;margin-left:12px}
+.nav .tabs a{padding:6px 14px;border-radius:7px;font-size:13px;text-decoration:none;color:#7fa9bd;border:1px solid transparent}
+.nav .tabs a:hover{color:#d8f3ff;border-color:#1b3546}
+.nav .tabs a.on{background:#0e2a2e;color:#7ef0dc;border-color:#2b6f72}
+.nav .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav .badge{font-size:11px;padding:4px 9px;border:1px solid #2b6f72;border-radius:5px;color:#7ef0dc;background:#0e2a2e}
+.nav .badge.g{color:#9dffd9;border-color:#2c8a6b}
+</style><style>.topbar .brand{display:none!important}
+/* 事件跳转卡片（值守台台账 → 这里） */
+.event-card .bubble{padding:0;overflow:hidden;border-color:rgba(94,234,212,.28);background:rgba(94,234,212,.05)}
+.event-title{padding:10px 13px 5px;font-size:11px;letter-spacing:.12em;color:#5eead4;text-transform:uppercase}
+.event-meta{padding:0 13px 9px;font-size:13px;color:#cfe8f5}
+.event-meta b{color:#fff;font-weight:600}
+.event-shot{display:block;padding:0 13px}
+.event-shot img{width:100%;max-width:320px;border-radius:8px;border:1px solid rgba(94,234,212,.25);display:block}
+.event-note{padding:8px 13px 11px;font-size:11px;color:#7fa9bd}
+.badge.bad{color:#ffb3ad;border-color:#8a3a32;background:#2a0f11}
+.event-actions{display:flex;gap:8px;padding:0 13px 11px}
+.event-actions a,.event-actions button{font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid rgba(94,234,212,.35);background:rgba(94,234,212,.10);color:#9dffd9;text-decoration:none;cursor:pointer;font-family:inherit}
+.event-actions a:hover,.event-actions button:hover{background:rgba(94,234,212,.2)}
+.seg-strip{margin-top:10px;border-top:1px solid rgba(255,255,255,.06);padding-top:9px}
+.seg-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px}
+.seg-title{font-size:10px;letter-spacing:.12em;color:#7fa9bd;text-transform:uppercase}
+.seg-meta{font-size:11px;color:#5eead4}
+.seg-items{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px}
+.seg-item{flex:0 0 auto;width:96px;border:1px solid rgba(255,255,255,.09);border-radius:6px;overflow:hidden;cursor:pointer;background:#08131e;position:relative}
+.seg-item img{display:block;width:100%;height:54px;object-fit:cover;opacity:.85}
+.seg-item .t{display:block;font-size:9px;color:#8fb6c8;padding:2px 4px;font-variant-numeric:tabular-nums}
+.seg-item.on{border-color:#5eead4}
+.seg-item.on img{opacity:1}
+.foot{margin:18px 22px 26px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);color:#4d6f80;font-size:11px;letter-spacing:.04em}
+</style></head>
+<body>
+<div class="app">
+<div class="nav">
+  <div class="brand"><div class="logo">◆</div>
+    <div><div class="bname">INSIGHT</div><div class="bsub">端侧视觉智能体 · 全离线</div></div>
+  </div>
+  <div class="tabs"><a href="/" class="">值守台</a><a href="/studio.html" class="on">对话分析</a></div>
+  <div class="right"><span class="badge g" id="sysChip" title="系统自检">OFFLINE · LOCAL</span><span class="badge">18 W</span></div>
+</div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none">
+          <defs>
+            <linearGradient id="lg" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#5eead4" />
+              <stop offset="1" stop-color="#7cc4ff" />
+            </linearGradient>
+          </defs>
+          <path d="M20 3.5 33.4 11v15L20 33.5 6.6 26V11L20 3.5Z" stroke="url(#lg)" stroke-width="1.4" opacity=".9" />
+          <circle cx="20" cy="19" r="6.2" stroke="url(#lg)" stroke-width="1.4" opacity=".85" />
+          <path d="M20 10.2v2.6M20 25.2v2.6M11.2 19h2.6M26.2 19h2.6" stroke="url(#lg)" stroke-width="1.4" stroke-linecap="round" />
+          <circle cx="20" cy="19" r="2.1" fill="url(#lg)" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">RexSeek<span>Studio</span></div>
+        <div class="tagline">开放世界指代定位 · 交互演示</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="engine-badge" id="engineBadge" title="推理引擎状态">
+        <span class="dot"></span>
+        <span id="engineText">演示模式</span>
+      </div>
+      <button class="ghost-btn" id="restartBtn" type="button" title="重新开始">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
+        <span>重新开始</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+
+    <!-- ============================== 左：媒体 ============================== -->
+    <section class="panel media-panel" id="mediaPanel">
+      <div class="panel-head">
+        <div class="head-left">
+          <span class="step">01</span>
+          <div>
+            <h2>输入画面</h2>
+            <p>选择示例，或把图片 / 视频拖进来</p>
+          </div>
+        </div>
+        <div class="head-actions">
+          <button class="icon-btn is-active" id="toggleBoxesBtn" type="button" title="显示 / 隐藏标注" aria-label="显示或隐藏标注" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 12S5.6 5.8 12 5.8 21.8 12 21.8 12 18.4 18.2 12 18.2 2.2 12 2.2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+          </button>
+          <button class="pill-btn" id="uploadBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4" /><path d="m7.5 8.5 4.5-4.5 4.5 4.5" /><path d="M4 15v3.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V15" /></svg>
+            <span>上传素材</span>
+          </button>
+          <input type="file" id="fileInput" accept="image/*,video/*" hidden />
+        </div>
+      </div>
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="scan"></div>
+
+          <div class="stage-hud hud-left">
+            <span class="hud-chip" id="mediaType">IMAGE</span>
+            <span class="hud-chip" id="mediaDim">—</span>
+          </div>
+          <div class="stage-hud hud-right">
+            <span class="hud-chip" id="indexChip" hidden>已索引</span>
+            <span class="hud-chip accent" id="targetCount">等待提问</span>
+          </div>
+
+          <div class="media-box" id="mediaBox" hidden>
+            <img id="stageImage" alt="示例画面" hidden />
+            <video id="stageVideo" muted loop playsinline hidden poster=""></video>
+            <div class="overlay" id="overlay"></div>
+            <div class="media-shade"></div>
+          </div>
+
+          <div class="stage-empty" id="stageEmpty">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.6-4.3a2 2 0 0 1 2.7 0L21 21" /></svg>
+            </div>
+            <p>把图片或视频拖到这里</p>
+            <span>支持 JPG / PNG / WEBP / MP4 / WEBM</span>
+          </div>
+
+          <div class="video-bar" id="videoBar" hidden>
+            <button class="play-btn" id="playBtn" type="button" aria-label="播放 / 暂停">
+              <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
+              <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.4" height="14" rx="1" /><rect x="13.6" y="5" width="3.4" height="14" rx="1" /></svg>
+            </button>
+            <div class="v-progress" id="vProgress" role="slider" aria-label="视频进度">
+              <div class="v-fill" id="vFill"></div>
+              <div class="v-thumb" id="vThumb"></div>
+            </div>
+            <span class="v-time" id="vTime">0.0s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="strip-items" id="sampleStrip"></div>
+      </div>
+      <div class="seg-strip" id="segStrip" hidden>
+        <div class="seg-head">
+          <span class="seg-title">事件片段 · 逐帧抽帧</span>
+          <span class="seg-meta" id="segMeta"></span>
+        </div>
+        <div class="seg-items" id="segItems"></div>
+      </div>
+    </section>
+
+    <!-- ============================== 右：对话 ============================== -->
+    <section class="panel chat-panel" id="chatPanel">
+      <div class="chat-head">
+        <div class="agent-avatar" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="9" stroke="#5eead4" stroke-width="1.3" opacity=".9" />
+            <circle cx="16" cy="16" r="3" fill="#5eead4" />
+            <path d="M16 3.5v4M16 24.5v4M3.5 16h4M24.5 16h4" stroke="#7cc4ff" stroke-width="1.3" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="agent-id">
+          <div class="agent-name">RexSeek Agent <span class="live-dot" aria-hidden="true"></span></div>
+          <div class="agent-sub" id="agentSub">视觉指代定位 · 就绪</div>
+        </div>
+        <div class="chat-actions">
+          <span class="session-chip" id="sessionChip" title="">会话</span>
+          <span class="step-tag">02 / AGENT</span>
+          <button class="icon-btn" id="clearBtn" type="button" title="清空对话" aria-label="清空对话">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16" /><path d="M9 7V4.5h6V7" /><path d="m6.5 7 1 13h9l1-13" /></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-scroll" id="chatScroll">
+        <div class="chat-inner" id="messages">
+
+          <div class="welcome" id="welcome">
+            <div class="welcome-orb" aria-hidden="true">
+              <div class="orb-ring"></div>
+              <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="8.5" stroke="url(#og)" stroke-width="1.3" /><circle cx="16" cy="16" r="2.8" fill="#5eead4" /><path d="M16 4v3.5M16 24.5V28M4 16h3.5M24.5 16H28" stroke="url(#og)" stroke-width="1.3" stroke-linecap="round" /><defs><linearGradient id="og" x1="4" y1="4" x2="28" y2="28"><stop stop-color="#5eead4" /><stop offset="1" stop-color="#7cc4ff" /></linearGradient></defs></svg>
+            </div>
+            <h3>你好，我是 <span class="grad-text">RexSeek</span></h3>
+            <p class="welcome-desc" id="welcomeDesc">左侧已经载入一张示例画面。用自然语言指代画面里的任意人、物或区域，我会把对应位置框出来，并给出判断依据。</p>
+            <div class="cap-row">
+              <span class="cap">开放世界定位</span>
+              <span class="cap">计数</span>
+              <span class="cap">属性检索</span>
+              <span class="cap">关系推理</span>
+            </div>
+            <div class="sugg-title">试试这样问 · <span id="welcomeScene">桥上的求婚</span></div>
+            <div class="sugg" id="welcomeSuggestions"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="composer-wrap">
+        <div class="quick-row" id="quickRow"></div>
+        <div class="composer">
+          <textarea id="input" rows="1" placeholder="问问画面里的内容，例如：穿蓝色裙子的女士在哪？" autocomplete="off"></textarea>
+          <div class="composer-bar">
+            <span class="composer-hint">Enter 发送 · Shift+Enter 换行</span>
+            <div class="composer-right">
+              <span class="model-chip" id="modelChip">RexSeek-3B</span>
+              <button class="send-btn" id="sendBtn" type="button" disabled aria-label="发送">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5" /><path d="m5.5 11.5 6.5-6.5 6.5 6.5" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="foot">Insight v1.1 · RexSeek-3B + Qwen2.5-1.5B · GroundingDINO-tiny · 全离线 · 国产 SoC · 18W</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
